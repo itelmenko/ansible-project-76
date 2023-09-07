@@ -1,0 +1,72 @@
+- hosts: all
+
+  gather_facts: no
+
+  vars:
+    pip_install_packages:
+      - name: docker
+
+  pre_tasks:
+    - name: Run apt-get update as a separate step
+      ansible.builtin.apt:
+        update_cache: yes
+      tags: prepare
+
+  roles:
+    - geerlingguy.pip
+
+  tasks:
+
+    - name: Make sure destination dir exists
+      file:
+        path: "{{ destination_path }}"
+        state: directory
+      tags: deploy
+
+    - name: Copy env file
+      ansible.builtin.template:
+        src: .env
+        dest: "{{ env_file_path }}"
+      tags: deploy
+
+    - name: Start a container
+      community.docker.docker_container:
+        name: redmine_container
+        image: redmine
+        state: started
+        restart: true
+        restart_policy: "always"
+        env_file: "{{ env_file_path }}"
+        ports:
+          - "80:3000"
+      register: output
+      tags: deploy
+
+    - name: Verify that service is running
+      ansible.builtin.assert:
+        that:
+          - "output.container.State.Running"
+      tags: deploy
+
+- hosts: webservers
+
+  gather_facts: no
+
+  tasks:
+    # Datadog Agent installation
+    - name: Import the Datadog Agent role from the Datadog collection
+      import_role:
+        name: datadog.dd.agent
+      tags: datadog
+  vars:
+    datadog_site: "{{ datadog_domain }}"
+    datadog_api_key: "{{ datadog_key }}"
+    datadog_checks:
+      http_check:
+        init_config:
+        instances:
+          - name: Redmine
+            url: "{{ app_domain }}"
+            method: GET
+            timeout: 10
+            http_response_status_code: 200
