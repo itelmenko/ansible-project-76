@@ -1,7 +1,5 @@
 - hosts: all
 
-  gather_facts: no
-
   vars:
     pip_install_packages:
       - name: docker
@@ -49,8 +47,6 @@
       tags: deploy
 
 - hosts: webservers
-
-  gather_facts: no
 
   tasks:
     # Datadog Agent installation
