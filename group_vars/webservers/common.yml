@@ -1,4 +1,3 @@
-app_domain: "https://telmenko.ru"
-destination_path: "/root/redmine"
+destination_path: /root/redmine
 env_file_path: "{{ destination_path }}/.env"
-datadog_domain: "datadoghq.eu"
+datadog_domain: datadoghq.eu

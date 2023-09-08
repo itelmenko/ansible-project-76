@@ -13,8 +13,6 @@
 * https://docs.ansible.com/ansible/latest/collections/community/docker/docker_container_module.html
 * https://galaxy.ansible.com/DataDog/ddd
 
-
-
 Необходимая инфраструктура создается через интерфейс облачного провайдера. Например, Digital Ocean (DO).
 
 Потребуется следующие составляющие:

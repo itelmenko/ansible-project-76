@@ -62,7 +62,7 @@
         init_config:
         instances:
           - name: Redmine
-            url: "{{ app_domain }}"
+            url: http://localhost
             method: GET
             timeout: 10
             http_response_status_code: 200
